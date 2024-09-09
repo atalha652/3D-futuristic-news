@@ -78,6 +78,8 @@ const Visualization = () => {
         Math.random() * 0.4 + 0.15
       })`;
       element.style.height = "150px";
+      element.style.cursor = "pointer";
+      element.style.borderRadius = "6px";
 
       const number = document.createElement("div");
       number.className = "number";
@@ -287,7 +289,7 @@ const Visualization = () => {
     modalHandle.current = true;
     setTimeout(() => {
       setExpandContent(true);
-    }, [1000]);
+    }, [500]);
     localStorage.setItem("modalData", JSON.stringify(modalData));
   };
 
@@ -326,14 +328,16 @@ const Visualization = () => {
           <Grid
             container
             sx={{
-              width: "80rem",
-              height: "65vh",
+              width: "auto",
+              maxWidth: "80rem",
+              // height: "65vh",
               marginLeft: "22rem",
               marginTop: "10rem",
               backgroundColor: "rgba(34, 34, 128, 0.743)",
               color: "rgba(127,255,255,0.75)",
               zIndex: 1000, // Higher z-index value
               position: "relative",
+              borderRadius: "16px",
             }}
           >
             <IconButton
@@ -363,6 +367,7 @@ const Visualization = () => {
                         paddingTop: "1rem",
                         paddingLeft: "1rem",
                         paddingRight: "1rem",
+                        borderRadius: "16px",
                       }}
                     >
                       <Typography
@@ -445,7 +450,10 @@ const Visualization = () => {
                       marginTop: ".5rem",
                       fontSize: "20px",
                       width: "40rem",
-                      cursor: "pointer"
+                      cursor: "pointer",
+                      color: "#D8FFFF", 
+                      textDecoration: "underline",
+                      fontWeight: "bold",
                     }}
                     onClick={handleLearnMoreClick}
                   >
