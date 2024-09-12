@@ -46,16 +46,16 @@ const Detail = () => {
   };
 
   const goBack = () => {
-    window.location.href = `/`;
+    window.history.back();
   };
 
   console.log("detail page");
   return (
-    <div style={containerStyle}>
-      <video autoPlay muted loop style={videoStyle}>
+    <div>
+      {/* <video autoPlay muted loop style={videoStyle}>
         <source src={backgroundVideo} type="video/mp4" />
         Your browser does not support the video tag.
-      </video>
+      </video> */}
 
       <IconButton
         onClick={goBack}

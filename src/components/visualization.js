@@ -30,7 +30,7 @@ const Visualization = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalData, setModalData] = useState(null);
   // const [modalHandle, setModalHandle] = useState(false);
-  console.log("modalOpen", modalOpen);
+  console.log("modalData", modalData);
   const [expandContent, setExpandContent] = useState(false);
 
   const modalHandle = useRef();
@@ -290,7 +290,7 @@ const Visualization = () => {
     setTimeout(() => {
       setExpandContent(true);
     }, [500]);
-    localStorage.setItem("modalData", JSON.stringify(modalData));
+    // localStorage.setItem("modalData", JSON.stringify(modalData));
   };
 
   // Handle modal close
@@ -305,19 +305,6 @@ const Visualization = () => {
 
   const encodeDataToQueryString = (data) => {
     return new URLSearchParams(data).toString();
-  };  
-
-  const handleLearnMoreClick = () => {
-    if (modalData) {
-      // Encode the modalData object into a query string
-      const queryString = encodeDataToQueryString({
-        image: modalData.image,
-        details: modalData.details,
-      });
-      
-      // Redirect to the desired URL with query parameters
-      window.location.href = `/detail?${queryString}`;
-    }
   };
 
   return (
@@ -445,20 +432,29 @@ const Visualization = () => {
                     We tell stories from the sports desk to the climate beat
                     using a range of approaches from detailed.
                   </Typography>
-                  <Typography
-                    sx={{
+                  <Link
+                    // to={`/detail?${encodeDataToQueryString({
+                    //   image: modalData?.image,
+                    //   details: modalData?.details,
+                    // })}`}
+                    to={{ 
+                      pathname: "/detail", 
+                      search: `?${encodeDataToQueryString({
+                        image: modalData?.image,
+                        details: modalData?.details,
+                      })}}`, }}
+                    style={{
                       marginTop: ".5rem",
                       fontSize: "20px",
                       width: "40rem",
                       cursor: "pointer",
-                      color: "#D8FFFF", 
+                      color: "#D8FFFF",
                       textDecoration: "underline",
                       fontWeight: "bold",
                     }}
-                    onClick={handleLearnMoreClick}
                   >
                     learn more...
-                  </Typography>
+                  </Link>
                 </Grid>
               </Grid>
             </div>
