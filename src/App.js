@@ -1,17 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react'; // Make sure to import useEffect
 import "./App.css";
 import Detail from "./pages/Detail/detail";
 import Home from "./pages/Home/home";
+import Visualization from './components/visualization';
 import { Routes, Route } from "react-router-dom";
 import backgroundVideo from './assets/vecteezy_3d-virtual-tv-studio-news-backdrop-for-tv-shows-tv-on_13654649.mp4'; // Adjust the path as necessary
 
 function App() {
+  
   const containerStyle = {
     position: 'relative',
     height: '100vh',
     overflow: 'hidden',
   };
-
+  
   const videoStyle = {
     position: 'absolute',
     top: '50%',
@@ -22,6 +24,8 @@ function App() {
     transform: 'translate(-50%, -50%)',
     zIndex: -1,
   };
+  
+  
 
   return (
     <div style={containerStyle}>
@@ -30,7 +34,7 @@ function App() {
         Your browser does not support the video tag.
       </video>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home />} />  
         <Route path="/detail" element={<Detail />} />
       </Routes>
     </div>

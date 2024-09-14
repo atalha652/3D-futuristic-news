@@ -10,14 +10,14 @@ import TWEEN from "@tweenjs/tween.js";
 import { table } from "../utils/jsonNew";
 import { Box, Modal, Typography, IconButton, Grid, Grow } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import Fade from "@mui/material/Fade";
-import Expand from "react-expand-animated";
 import { Link } from "react-router-dom";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { element } from "three/examples/jsm/nodes/Nodes.js";
 
-// Extend the Three.js namespace with CSS3DObject and TrackballControls
 extend({ CSS3DObject, TrackballControls });
 
-const Visualization = () => {
+const Visualization = React.memo(() => {
   console.log("table", table);
   const containerRef = useRef();
   const cameraRef = useRef();
@@ -39,7 +39,6 @@ const Visualization = () => {
   useEffect(() => {
     init();
     animate();
-
     window.addEventListener("resize", onWindowResize);
     window.addEventListener("click", toggleModal);
     return () => {
@@ -47,6 +46,12 @@ const Visualization = () => {
       window.removeEventListener("click", toggleModal);
       controlsRef.current.dispose();
     };
+  }, []);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1500, // Duration of the animation
+    });
   }, []);
 
   const init = () => {
@@ -74,17 +79,20 @@ const Visualization = () => {
     for (let i = 0; i < table.length - elementsToExclude; i += 5) {
       const element = document.createElement("div");
       element.className = "element";
+      element.id = "box";
       element.style.backgroundColor = `rgba(34, 34, 128,${
         Math.random() * 0.4 + 0.15
       })`;
       element.style.height = "150px";
       element.style.cursor = "pointer";
       element.style.borderRadius = "6px";
+      element.style.transition = "all 0.3s ease";
 
       const number = document.createElement("div");
       number.className = "number";
       number.textContent = table[i + 2];
       element.appendChild(number);
+      number.style.color = "#FFFFFF";
 
       const symbol = document.createElement("div");
       symbol.className = "symbol";
@@ -97,6 +105,7 @@ const Visualization = () => {
       details.className = "details"; // Start with the blur class
       details.innerHTML = table[i + 1];
       details.style.backgroundColor = "rgba(0,255,255, 0.04)";
+      details.style.color = "#FFFFFF";
       element.appendChild(details);
 
       const objectCSS = new CSS3DObject(element);
@@ -111,12 +120,6 @@ const Visualization = () => {
       objectCSS.scale.set(1, 1, 1); // Ensure initial scale is 1 (normal size)
 
       objectCSS.element.addEventListener("mouseenter", () => {
-        // Add CSS properties to prevent blurriness
-        // objectCSS.element.style.transformOrigin = "center center";
-        // objectCSS.element.style.transformStyle = "preserve-3d";
-        // objectCSS.element.style.backfaceVisibility = "hidden";
-        // objectCSS.element.style.willChange = "transform"; // Optimize performance
-
         new TWEEN.Tween(objectCSS.scale)
           .to({ x: 1.2, y: 1.2, z: 1.2 }, 200)
           .start();
@@ -128,11 +131,6 @@ const Visualization = () => {
 
       objectCSS.element.addEventListener("mouseleave", () => {
         new TWEEN.Tween(objectCSS.scale).to({ x: 1, y: 1, z: 1 }, 200).start();
-        // Optional: reset CSS properties
-        // objectCSS.element.style.transformOrigin = "";
-        // objectCSS.element.style.transformStyle = "";
-        // objectCSS.element.style.backfaceVisibility = "";
-        // objectCSS.element.style.willChange = "";
       });
 
       const object3D = new THREE.Object3D();
@@ -295,7 +293,7 @@ const Visualization = () => {
 
   // Handle modal close
   const handleModalClose = (event) => {
-    event.stopPropagation(); // Prevents any parent click handlers from being invoked
+    event.stopPropagation();
     setModalOpen(false);
     setTimeout(() => {
       setExpandContent(false);
@@ -311,8 +309,11 @@ const Visualization = () => {
     <Fragment>
       <div ref={containerRef} />
       <>
-        <Expand open={expandContent} duration={1000}>
+        <Modal open={expandContent} duration={2000}>
           <Grid
+            data-aos="zoom-in"
+            data-aos-offset="100"
+            data-aos-duration="900"
             container
             sx={{
               width: "auto",
@@ -322,7 +323,7 @@ const Visualization = () => {
               marginTop: "10rem",
               backgroundColor: "rgba(34, 34, 128, 0.743)",
               color: "rgba(127,255,255,0.75)",
-              zIndex: 1000, // Higher z-index value
+              zIndex: 1000,
               position: "relative",
               borderRadius: "16px",
             }}
@@ -336,7 +337,7 @@ const Visualization = () => {
                 color: "rgba(127,255,255,0.75)",
               }}
             >
-              <CloseIcon />
+              <CloseIcon data-aos="flip-down" />
             </IconButton>
             <div style={{ padding: "2rem", width: "65rem" }}>
               <Grid container>
@@ -360,10 +361,12 @@ const Visualization = () => {
                       <Typography
                         sx={{
                           fontSize: "24px",
+                          color: "#FFFFFF",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "flex-end",
                           marginRight: "1rem",
+                          letterSpacing: "0.1em",
                         }}
                       >
                         26/Sep
@@ -379,6 +382,8 @@ const Visualization = () => {
                           backgroundColor: "rgba(0,255,255, 0.04)",
                           fontSize: "28px",
                           marginTop: "1rem",
+                          color: "#FFFFFF",
+                          letterSpacing: "0.020em",
                         }}
                       >
                         {modalData.details}
@@ -387,18 +392,25 @@ const Visualization = () => {
                   )}
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography variant="h5">E.V. Battery Breakdown</Typography>
+                  <Typography variant="h4" sx={{  color: "#FFFFFF",}}>E.V. Battery Breakdown</Typography>
                   <Typography
                     sx={{
-                      marginTop: "1rem",
+                      marginTop: "1.3rem",
                       fontSize: "20px",
+                      color: "#ffffffbf",
                     }}
                   >
                     As automakers go electric, the hunt for raw materials has
                     intensified. This effect illustrates the elements required
                     for different types of electric vehicle batteries.
                   </Typography>
-                  <Typography sx={{ marginTop: "1rem", fontSize: "20px" }}>
+                  <Typography
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "20px",
+                      color: "#ffffffbf",
+                    }}
+                  >
                     August 19, 2022
                   </Typography>
                   <Typography
@@ -406,6 +418,7 @@ const Visualization = () => {
                       marginTop: "1rem",
                       fontSize: "20px",
                       width: "40rem",
+                      color: "#ffffffbf",
                     }}
                   >
                     As automakers go electric, the hunt for raw materials has
@@ -417,6 +430,7 @@ const Visualization = () => {
                       marginTop: "1rem",
                       fontSize: "20px",
                       width: "40rem",
+                      color: "#ffffffbf",
                     }}
                   >
                     Produced by Nia Adurogbola, Lydia Jessup, Evan Grothjan,
@@ -427,42 +441,42 @@ const Visualization = () => {
                       marginTop: "1rem",
                       fontSize: "20px",
                       width: "40rem",
+                      color: "#ffffffbf",
                     }}
                   >
                     We tell stories from the sports desk to the climate beat
                     using a range of approaches from detailed.
                   </Typography>
                   <Link
-                    // to={`/detail?${encodeDataToQueryString({
-                    //   image: modalData?.image,
-                    //   details: modalData?.details,
-                    // })}`}
-                    to={{ 
-                      pathname: "/detail", 
+                    to={{
+                      pathname: "/detail",
                       search: `?${encodeDataToQueryString({
                         image: modalData?.image,
                         details: modalData?.details,
-                      })}}`, }}
+
+                      })}}`,
+                    }}
                     style={{
-                      marginTop: ".5rem",
+                      position: "absolute",
+                      bottom: "45px",
                       fontSize: "20px",
                       width: "40rem",
+                      color: "#FFFFFF",
                       cursor: "pointer",
-                      color: "#D8FFFF",
                       textDecoration: "underline",
-                      fontWeight: "bold",
+                      letterSpacing: "0.09rem",
                     }}
                   >
-                    learn more...
+                    Learn more...
                   </Link>
                 </Grid>
               </Grid>
             </div>
           </Grid>
-        </Expand>
+        </Modal>
       </>
     </Fragment>
   );
-};
+});
 
 export default Visualization;
